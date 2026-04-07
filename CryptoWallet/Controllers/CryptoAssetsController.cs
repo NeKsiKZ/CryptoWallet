@@ -1,6 +1,7 @@
 ﻿using CryptoWallet.Data;
 using CryptoWallet.DTOs;
 using CryptoWallet.Models;
+using CryptoWallet.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -12,27 +13,36 @@ namespace CryptoWallet.Controllers
     public class CryptoAssetsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ICryptoPriceService _priceService;
 
-        public CryptoAssetsController(AppDbContext context)
+        public CryptoAssetsController(AppDbContext context, ICryptoPriceService priceService)
         {
             _context = context;
+            _priceService = priceService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CryptoAssetDto>>> GetAll()
         {
-            var assets = await _context.CryptoAssets
-                .Select(a => new  CryptoAssetDto
+            var assets = await _context.CryptoAssets.ToListAsync();
+            var dtos = new List<CryptoAssetDto>();
+
+            foreach (var a in assets)
+            {
+                var currentPrice = await _priceService.GetCurrentPriceAsync(a.Symbol);
+
+                dtos.Add(new CryptoAssetDto
                 {
                     Id = a.Id,
                     Symbol = a.Symbol,
                     Quantity = a.Quantity,
                     PurchasePrice = a.PurchasePrice,
-                    PurchaseDate = a.PurchaseDate
-                })
-                .ToListAsync();
+                    PurchaseDate = a.PurchaseDate,
+                    CurrentPrice = currentPrice
+                });
+            }
 
-            return Ok(assets);
+            return Ok(dtos);
         }
 
         [HttpPost]
