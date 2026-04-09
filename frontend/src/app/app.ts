@@ -1,11 +1,68 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CryptoService } from './services/crypto.service';
+import { CryptoAsset } from './models/crypto-asset';
 
 @Component({
   selector: 'app-root',
-  imports: [],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './app.html'
 })
-export class App {
-  protected readonly title = signal('frontend');
+export class App implements OnInit {
+  assets: CryptoAsset[] = [];
+  
+  isFormVisible: boolean = false;
+  newAsset = {
+    symbol: '',
+    quantity: 0,
+    purchasePrice: 0
+  };
+
+  constructor(
+    private cryptoService: CryptoService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    console.log('Aplikacja startuje.');
+    this.loadAssets();
+  }
+
+  loadAssets(): void {
+    this.cryptoService.getAssets().subscribe({
+      next: (data) => {
+        console.log('POBRANO DANE Z BACKENDU:', data);
+        this.assets = data;
+        
+        this.cdr.detectChanges(); 
+      },
+      error: (err) => console.error('Błąd pobierania danych:', err)
+    });
+  }
+
+  toggleForm(): void {
+    this.isFormVisible = !this.isFormVisible;
+  }
+
+onSubmit(): void {
+    if (!this.newAsset.symbol || this.newAsset.quantity <= 0 || this.newAsset.purchasePrice <= 0) {
+      alert('Wypełnij poprawnie wszystkie pola!');
+      return;
+    }
+
+    this.cryptoService.addAsset(this.newAsset).subscribe({
+      next: () => {
+        this.loadAssets(); 
+        
+        this.isFormVisible = false;
+        this.newAsset = { symbol: '', quantity: 0, purchasePrice: 0 };
+      },
+      error: (err) => {
+        console.error('Błąd dodawania:', err);
+        alert('Błąd dodawania kryptowaluty.');
+      }
+    });
+  }
 }
