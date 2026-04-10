@@ -20,6 +20,9 @@ export class App implements OnInit {
     purchasePrice: 0
   };
 
+  editingId: number | null = null;
+  editCache: any = {};
+
   constructor(
     private cryptoService: CryptoService,
     private cdr: ChangeDetectorRef
@@ -44,6 +47,35 @@ export class App implements OnInit {
 
   toggleForm(): void {
     this.isFormVisible = !this.isFormVisible;
+  }
+
+  startEdit(asset: CryptoAsset): void {
+    this.editingId = asset.id;
+    this.editCache = { ...asset};
+  }
+
+  cancelEdit(): void {
+    this.editingId = null;
+    this.editCache = {};
+  }
+
+  saveEdit(): void {
+    if (this.editingId) {
+      const dto = {
+        symbol: this.editCache.symbol,
+        quantity: this.editCache.quantity,
+        purchasePrice: this.editCache.purchasePrice
+      };
+
+      this.cryptoService.updateAsset(this.editingId, dto).subscribe({
+        next: () => {
+          console.log(`Zaktualizowano id: ${this.editingId}`);
+          this.loadAssets();
+          this.editingId = null;
+        },
+        error: (err) => console.error('Błąd podczas aktualizacji:', err)
+      });
+    }
   }
 
     onDelete(id: number): void {

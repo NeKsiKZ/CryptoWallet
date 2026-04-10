@@ -23,4 +23,7 @@ export class CryptoService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  updateAsset(id: number, assetDto: any): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, assetDto);
+  }
 }
