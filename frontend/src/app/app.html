@@ -27,11 +27,12 @@
     <thead style="background-color: #e0e0e0;">
       <tr>
         <th>Symbol</th>
-        <th>Ilość</th>
+        <th>Wolumen</th>
         <th>Cena Zakupu</th>
         <th>Aktualny Kurs</th>
         <th>Wartość Portfela</th>
         <th>Zysk / Strata</th>
+        <th>Akcje</th>
       </tr>
     </thead>
     <tbody>
@@ -45,6 +46,11 @@
           
           <td [style.color]="asset.profitLoss! > 0 ? 'green' : (asset.profitLoss! < 0 ? 'red' : 'black')">
             <b>{{ asset.profitLoss ? (asset.profitLoss | currency:'USD') : '-' }}</b>
+          </td>
+          <td>
+            <button (click)="onDelete(asset.id)" style="color: red; cursor: pointer;">
+              Usuń
+            </button>
           </td>
         </tr>
       }

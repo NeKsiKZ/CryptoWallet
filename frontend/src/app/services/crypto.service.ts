@@ -18,4 +18,9 @@ export class CryptoService {
   addAsset(asset: { symbol: string; quantity: number; purchasePrice: number }): Observable<CryptoAsset> {
     return this.http.post<CryptoAsset>(this.apiUrl, asset);
   }
+
+  deleteAsset(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
 }

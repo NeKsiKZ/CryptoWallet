@@ -46,6 +46,19 @@ export class App implements OnInit {
     this.isFormVisible = !this.isFormVisible;
   }
 
+    onDelete(id: number): void {
+    if (confirm(`Czy na pewno chcesz usunąć?`)) {
+      this.cryptoService.deleteAsset(id).subscribe({
+        next: () => {
+          this.assets = this.assets.filter(a => a.id !== id);
+          this.cdr.detectChanges();
+          console.log(`Usunięto id: ${id}`);
+        },
+        error: (err) => console.error('Bład podczas usuwania:', err)
+      });
+    }
+  }
+
 onSubmit(): void {
     if (!this.newAsset.symbol || this.newAsset.quantity <= 0 || this.newAsset.purchasePrice <= 0) {
       alert('Wypełnij poprawnie wszystkie pola!');
@@ -65,4 +78,5 @@ onSubmit(): void {
       }
     });
   }
+
 }
