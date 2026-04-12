@@ -72,45 +72,83 @@ export class App implements OnInit {
   }
 
   applySort(): void {
-  if (!this.sortColumn) return;
+    if (!this.sortColumn) return;
 
-  this.groupedAssets.sort((a, b) => {
-    let valA: any;
-    let valB: any;
+    this.groupedAssets.sort((a, b) => {
+      let valA: any;
+      let valB: any;
 
-    switch (this.sortColumn) {
-      case 'symbol':
-        valA = a.symbol;
-        valB = b.symbol;
-        break;
-      case 'quantity':
-        valA = a.totalQuantity;
-        valB = b.totalQuantity;
-        break;
-      case 'purchasePrice':
-        valA = a.averagePurchasePrice;
-        valB = b.averagePurchasePrice;
-        break;
-      case 'totalValue':
-        valA = a.totalValue;
-        valB = b.totalValue;
-        break;
-      case 'profitLoss':
-        valA = a.totalProfitLoss;
-        valB = b.totalProfitLoss;
-        break;
-      case 'profitLossPercentage':
-        valA = a.profitLossPercentage;
-        valB = b.profitLossPercentage;
-        break;
-      default:
+      switch (this.sortColumn) {
+        case 'symbol':
+          valA = a.symbol;
+          valB = b.symbol;
+          break;
+        case 'quantity':
+          valA = a.totalQuantity;
+          valB = b.totalQuantity;
+          break;
+        case 'purchasePrice':
+          valA = a.averagePurchasePrice;
+          valB = b.averagePurchasePrice;
+          break;
+        case 'totalValue':
+          valA = a.totalValue;
+          valB = b.totalValue;
+          break;
+        case 'profitLoss':
+          valA = a.totalProfitLoss;
+          valB = b.totalProfitLoss;
+          break;
+        case 'profitLossPercentage':
+          valA = a.profitLossPercentage;
+          valB = b.profitLossPercentage;
+          break;
+        default:
+          return 0;
+      }
+
+      if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    this.groupedAssets.forEach(group => {
+      group.items.sort((childA, childB) => {
+        let childValA: any;
+        let childValB: any;
+
+        switch (this.sortColumn) {
+          case 'quantity':
+            childValA = childA.quantity;
+            childValB = childB.quantity;
+            break;
+          case 'purchasePrice':
+            childValA = childA.purchasePrice;
+            childValB = childB.purchasePrice;
+            break;
+          case 'totalValue':
+            childValA = childA.totalValue;
+            childValB = childB.totalValue;
+            break;
+          case 'profitLoss':
+            childValA = childA.profitLoss;
+            childValB = childB.profitLoss;
+            break;
+          case 'profitLossPercentage':
+            childValA = (childA as any).profitLossPercentage;
+            childValB = (childB as any).profitLossPercentage;
+            break;
+          case 'symbol':
+            return 0;
+          default:
+            return 0;
+        }
+
+        if (childValA < childValB) return this.sortDirection === 'asc' ? -1 : 1;
+        if (childValA > childValB) return this.sortDirection === 'asc' ? 1 : -1;
         return 0;
-    }
-
-    if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
-    if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
-    return 0;
-  });
+      });
+    });
   }
 
   processGroups(): void {
