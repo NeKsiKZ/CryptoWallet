@@ -33,6 +33,8 @@ export class App implements OnInit {
   };
 
   editingId: number | null = null;
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
   editCache: any = {};
 
   constructor(
@@ -55,6 +57,55 @@ export class App implements OnInit {
       },
       error: (err) => console.error('Błąd pobierania danych:', err)
     });
+  }
+
+  sortData(column: string): void {
+  if (this.sortColumn === column) {
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    this.sortColumn = column;
+    this.sortDirection = 'asc';
+  }
+  
+  this.applySort();
+  }
+
+  applySort(): void {
+  if (!this.sortColumn) return;
+
+  this.groupedAssets.sort((a, b) => {
+    let valA: any;
+    let valB: any;
+
+    switch (this.sortColumn) {
+      case 'symbol':
+        valA = a.symbol;
+        valB = b.symbol;
+        break;
+      case 'quantity':
+        valA = a.totalQuantity;
+        valB = b.totalQuantity;
+        break;
+      case 'purchasePrice':
+        valA = a.averagePurchasePrice;
+        valB = b.averagePurchasePrice;
+        break;
+      case 'totalValue':
+        valA = a.totalValue;
+        valB = b.totalValue;
+        break;
+      case 'profitLoss':
+        valA = a.totalProfitLoss;
+        valB = b.totalProfitLoss;
+        break;
+      default:
+        return 0;
+    }
+
+    if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+    if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
   }
 
   processGroups(): void {
@@ -88,6 +139,8 @@ export class App implements OnInit {
       group.averagePurchasePrice = group.totalQuantity > 0 ? totalCost / group.totalQuantity : 0;
       return group;
     });
+
+    this.applySort();
   }
 
   toggleGroup(group: GroupedAsset): void {

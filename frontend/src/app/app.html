@@ -24,13 +24,33 @@
   }
 
 <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
-    <thead style="background-color: #1e222d; color: #d1d4dc;"> <tr>
-        <th>Symbol</th>
-        <th>Wolumen</th>
-        <th>Cena Zakupu</th>
-        <th>Aktualny Kurs</th>
-        <th>Wartość</th>
-        <th>Zysk / Strata</th>
+<thead style="background-color: #1e222d; color: #d1d4dc;">
+      <tr>
+        <th (click)="sortData('symbol')" style="cursor: pointer; user-select: none;">
+          Symbol
+          @if (sortColumn === 'symbol') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        </th>
+        
+        <th (click)="sortData('quantity')" style="cursor: pointer; user-select: none;">
+          Wolumen
+          @if (sortColumn === 'quantity') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        </th>
+        
+        <th (click)="sortData('purchasePrice')" style="cursor: pointer; user-select: none;">
+          Cena Zakupu
+          @if (sortColumn === 'purchasePrice') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        </th>
+        
+        <th>Aktualny Kurs</th> <th (click)="sortData('totalValue')" style="cursor: pointer; user-select: none;">
+          Wartość
+          @if (sortColumn === 'totalValue') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        </th>
+        
+        <th (click)="sortData('profitLoss')" style="cursor: pointer; user-select: none;">
+          Zysk netto
+          @if (sortColumn === 'profitLoss') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        </th>
+        
         <th>Akcje</th>
       </tr>
     </thead>
