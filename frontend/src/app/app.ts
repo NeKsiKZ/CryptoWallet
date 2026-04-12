@@ -11,6 +11,7 @@ interface GroupedAsset {
   currentPrice: number;
   totalValue: number;
   totalProfitLoss: number;
+  profitLossPercentage: number;
   isExpanded: boolean;
   items: CryptoAsset[];
 }
@@ -98,6 +99,10 @@ export class App implements OnInit {
         valA = a.totalProfitLoss;
         valB = b.totalProfitLoss;
         break;
+      case 'profitLossPercentage':
+        valA = a.profitLossPercentage;
+        valB = b.profitLossPercentage;
+        break;
       default:
         return 0;
     }
@@ -122,6 +127,7 @@ export class App implements OnInit {
           currentPrice: asset.currentPrice || 0,
           totalValue: 0,
           totalProfitLoss: 0,
+          profitLossPercentage: 0,
           isExpanded: this.groupedAssets.find(g => g.symbol === sym)?.isExpanded || false,
           items: []
         });
@@ -134,11 +140,19 @@ export class App implements OnInit {
       group.totalProfitLoss += (asset.profitLoss || 0);
     }
 
-    this.groupedAssets = Array.from(groups.values()).map(group => {
-      const totalCost = group.items.reduce((sum, item) => sum + (item.quantity * item.purchasePrice), 0);
-      group.averagePurchasePrice = group.totalQuantity > 0 ? totalCost / group.totalQuantity : 0;
-      return group;
-    });
+  this.groupedAssets = Array.from(groups.values()).map(group => {
+        const totalCost = group.items.reduce((sum, item) => sum + (item.quantity * item.purchasePrice), 0);
+        group.averagePurchasePrice = group.totalQuantity > 0 ? totalCost / group.totalQuantity : 0;
+
+        group.profitLossPercentage = totalCost > 0 ? (group.totalProfitLoss / totalCost) * 100 : 0;
+
+        group.items.forEach(item => {
+          const itemCost = item.quantity * item.purchasePrice;
+          (item as any).profitLossPercentage = itemCost > 0 ? (item.profitLoss! / itemCost) * 100 : 0;
+        });
+
+        return group;
+      });
 
     this.applySort();
   }
