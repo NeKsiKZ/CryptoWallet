@@ -23,55 +23,71 @@
     </div>
   }
 
-  <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
-    <thead style="background-color: #e0e0e0;">
-      <tr>
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
+    <thead style="background-color: #1e222d; color: #d1d4dc;"> <tr>
         <th>Symbol</th>
         <th>Wolumen</th>
         <th>Cena Zakupu</th>
         <th>Aktualny Kurs</th>
-        <th>Wartość Portfela</th>
+        <th>Wartość</th>
         <th>Zysk / Strata</th>
         <th>Akcje</th>
       </tr>
     </thead>
     <tbody>
-      @for (asset of assets; track asset.id) {
-              <tr>
-                @if (editingId === asset.id) {
-                  <td><input [(ngModel)]="editCache.symbol" style="width: 70px;"></td>
-                  <td><input type="number" [(ngModel)]="editCache.quantity" style="width: 70px;"></td>
-                  <td><input type="number" [(ngModel)]="editCache.purchasePrice" style="width: 90px;"></td>
-                  <td colspan="2" style="color: gray; font-size: 0.9em;"><i>Zapisz, aby przeliczyć</i></td>
-                  <td>-</td>
-                  <td>
-                    <button (click)="saveEdit()" style="color: green; cursor: pointer; font-weight: bold;">Zastosuj</button>
-                    <button (click)="cancelEdit()" style="cursor: pointer;">Anuluj</button>
-                  </td>
-                } @else {
-                  <td><b>{{ asset.symbol | uppercase }}</b></td>
-                  <td>{{ asset.quantity }}</td>
-                  <td>{{ asset.purchasePrice | currency:'USD' }}</td>
-                  <td>{{ asset.currentPrice ? (asset.currentPrice | currency:'USD') : 'Ładowanie...' }}</td>
-                  <td>{{ asset.totalValue ? (asset.totalValue | currency:'USD') : '-' }}</td>
-                  
-                  <td [style.color]="asset.profitLoss! > 0 ? 'green' : (asset.profitLoss! < 0 ? 'red' : 'black')">
-                    <b>{{ asset.profitLoss ? (asset.profitLoss | currency:'USD') : '-' }}</b>
-                  </td>
-                  <td>
-                    <button (click)="startEdit(asset)" style="cursor: pointer; margin-right: 5px;">
-                      Edytuj
-                    </button>
-                    <button (click)="onDelete(asset.id)" style="color: red; cursor: pointer;">
-                      Usuń
-                    </button>
-                  </td>
-                }
-              </tr>
-            }
+      @for (group of groupedAssets; track group.symbol) {
+        
+        <tr (click)="toggleGroup(group)" style="background-color: #f0f2f5; cursor: pointer;">
+          <td>
+            <b style="font-size: 1.1em;">
+              {{ group.isExpanded ? '▼' : '▶' }} {{ group.symbol }}
+            </b>
+            <span style="color: gray; font-size: 0.8em; margin-left: 5px;">(Otwarte: {{ group.items.length }})</span>
+          </td>
+          <td><b>{{ group.totalQuantity | number:'1.0-8' }}</b></td>
+          <td><b>{{ group.averagePurchasePrice | currency:'USD' }}</b></td>
+          <td><b>{{ group.currentPrice ? (group.currentPrice | currency:'USD') : 'Ładowanie...' }}</b></td>
+          <td><b>{{ group.totalValue | currency:'USD' }}</b></td>
+          <td [style.color]="group.totalProfitLoss > 0 ? 'green' : (group.totalProfitLoss < 0 ? 'red' : 'black')">
+            <b>{{ group.totalProfitLoss | currency:'USD' }}</b>
+          </td>
+          <td style="color: gray; font-size: 0.8em;">Kliknij, by rozwinąć</td>
+        </tr>
+
+        @if (group.isExpanded) {
+          @for (asset of group.items; track asset.id) {
+            <tr>
+              @if (editingId === asset.id) {
+                <td style="padding-left: 30px;">Edycja #{{ asset.id }}</td>
+                <td><input type="number" [(ngModel)]="editCache.quantity" style="width: 70px;"></td>
+                <td><input type="number" [(ngModel)]="editCache.purchasePrice" style="width: 90px;"></td>
+                <td colspan="2" style="color: gray; font-size: 0.9em;"><i>Zapisz, aby przeliczyć</i></td>
+                <td>-</td>
+                <td>
+                  <button (click)="saveEdit(); $event.stopPropagation()" style="color: green; cursor: pointer; font-weight: bold;">Zastosuj</button>
+                  <button (click)="cancelEdit(); $event.stopPropagation()" style="cursor: pointer;">Anuluj</button>
+                </td>
+              } @else {
+                <td style="padding-left: 30px; color: #555;">Buy #{{ asset.id }}</td>
+                <td style="color: #555;">{{ asset.quantity | number:'1.0-8' }}</td>
+                <td style="color: #555;">{{ asset.purchasePrice | currency:'USD' }}</td>
+                <td style="color: #555;">{{ group.currentPrice | currency:'USD' }}</td>
+                <td style="color: #555;">{{ asset.totalValue | currency:'USD' }}</td>
+                <td [style.color]="asset.profitLoss! > 0 ? 'green' : (asset.profitLoss! < 0 ? 'red' : 'black')">
+                  {{ asset.profitLoss | currency:'USD' }}
+                </td>
+                <td>
+                  <button (click)="startEdit(asset); $event.stopPropagation()" style="cursor: pointer; margin-right: 5px;">Edytuj</button>
+                  <button (click)="onDelete(asset.id); $event.stopPropagation()" style="color: red; cursor: pointer;">Usuń</button>
+                </td>
+              }
+            </tr>
+          }
+        }
+      }
       @empty {
         <tr>
-          <td colspan="6" style="text-align: center; padding: 20px;">
+          <td colspan="7" style="text-align: center; padding: 20px;">
             Brak kryptowalut w bazie.
           </td>
         </tr>

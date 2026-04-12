@@ -4,6 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { CryptoService } from './services/crypto.service';
 import { CryptoAsset } from './models/crypto-asset';
 
+interface GroupedAsset {
+  symbol: string;
+  totalQuantity: number;
+  averagePurchasePrice: number;
+  currentPrice: number;
+  totalValue: number;
+  totalProfitLoss: number;
+  isExpanded: boolean;
+  items: CryptoAsset[];
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -12,6 +23,7 @@ import { CryptoAsset } from './models/crypto-asset';
 })
 export class App implements OnInit {
   assets: CryptoAsset[] = [];
+  groupedAssets: GroupedAsset[] = [];
   
   isFormVisible: boolean = false;
   newAsset = {
@@ -38,11 +50,48 @@ export class App implements OnInit {
       next: (data) => {
         console.log('POBRANO DANE Z BACKENDU:', data);
         this.assets = data;
-        
+        this.processGroups();
         this.cdr.detectChanges(); 
       },
       error: (err) => console.error('Błąd pobierania danych:', err)
     });
+  }
+
+  processGroups(): void {
+    const groups = new Map<string, GroupedAsset>();
+
+    for (const asset of this.assets) {
+      const sym = asset.symbol.toUpperCase();
+      
+      if (!groups.has(sym)) {
+        groups.set(sym, {
+          symbol: sym,
+          totalQuantity: 0,
+          averagePurchasePrice: 0,
+          currentPrice: asset.currentPrice || 0,
+          totalValue: 0,
+          totalProfitLoss: 0,
+          isExpanded: this.groupedAssets.find(g => g.symbol === sym)?.isExpanded || false,
+          items: []
+        });
+      }
+
+      const group = groups.get(sym)!;
+      group.items.push(asset);
+      group.totalQuantity += asset.quantity;
+      group.totalValue += (asset.totalValue || 0);
+      group.totalProfitLoss += (asset.profitLoss || 0);
+    }
+
+    this.groupedAssets = Array.from(groups.values()).map(group => {
+      const totalCost = group.items.reduce((sum, item) => sum + (item.quantity * item.purchasePrice), 0);
+      group.averagePurchasePrice = group.totalQuantity > 0 ? totalCost / group.totalQuantity : 0;
+      return group;
+    });
+  }
+
+  toggleGroup(group: GroupedAsset): void {
+    group.isExpanded = !group.isExpanded;
   }
 
   toggleForm(): void {
