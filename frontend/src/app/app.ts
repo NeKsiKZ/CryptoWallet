@@ -132,6 +132,7 @@ export class App implements OnInit {
       this.cryptoService.deleteAsset(id).subscribe({
         next: () => {
           this.assets = this.assets.filter(a => a.id !== id);
+          this.processGroups();
           this.cdr.detectChanges();
           console.log(`Usunięto id: ${id}`);
         },
