@@ -7,19 +7,31 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; width: 300px; background-color: #f9f9f9;">
-      <h3 style="margin-top: 0;">Nowa waluta</h3>
+    <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl w-full max-w-sm shadow-xl">
+      <h3 class="text-xl font-semibold mb-4 text-white">Dodaj transakcję</h3>
       
-      <label>Symbol:</label><br>
-      <input type="text" [(ngModel)]="newAsset.symbol" style="margin-bottom: 10px; width: 100%;"><br>
+      <div class="mb-4">
+        <label class="block text-slate-400 text-sm mb-1">Symbol (np. BTC)</label>
+        <input type="text" [(ngModel)]="newAsset.symbol" 
+               class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+      </div>
 
-      <label>Ilość sztuk:</label><br>
-      <input type="number" [(ngModel)]="newAsset.quantity" style="margin-bottom: 10px; width: 100%;"><br>
+      <div class="mb-4">
+        <label class="block text-slate-400 text-sm mb-1">Ilość sztuk</label>
+        <input type="number" [(ngModel)]="newAsset.quantity" 
+               class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition-all">
+      </div>
 
-      <label>Cena Zakupu USD:</label><br>
-      <input type="number" [(ngModel)]="newAsset.purchasePrice" style="margin-bottom: 10px; width: 100%;"><br>
+      <div class="mb-6">
+        <label class="block text-slate-400 text-sm mb-1">Cena Zakupu USD</label>
+        <input type="number" [(ngModel)]="newAsset.purchasePrice" 
+               class="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition-all">
+      </div>
 
-      <button (click)="onSubmit()" style="width: 100%; cursor: pointer;">Dodaj</button>
+      <button (click)="onSubmit()" 
+              class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+        Dodaj
+      </button>
     </div>
   `
 })

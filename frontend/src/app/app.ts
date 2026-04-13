@@ -103,7 +103,7 @@ export class App implements OnInit {
     if (confirm(`Czy na pewno chcesz usunąć?`)) {
       this.cryptoService.deleteAsset(id).subscribe({
         next: () => {
-          this.loadAssets(); // Pobieramy na nowo, żeby mieć 100% pewności, że widok jest zgodny z bazą
+          this.loadAssets();
           console.log(`Usunięto id: ${id}`);
         },
         error: (err) => console.error('Błąd podczas usuwania:', err)

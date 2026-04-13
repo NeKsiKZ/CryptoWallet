@@ -1,91 +1,85 @@
-<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; text-align: left; border-collapse: collapse;">
-<thead style="background-color: #1e222d; color: #d1d4dc;">
+<div class="bg-slate-800 rounded-xl shadow-2xl border border-slate-700">
+  <table class="w-full text-left border-collapse table-fixed">
+    
+    <thead class="bg-slate-900/50 text-slate-400 text-sm uppercase tracking-wider border-b border-slate-700">
       <tr>
-        <th (click)="sortData('symbol')" style="cursor: pointer; user-select: none;">
-          Symbol
-          @if (sortColumn === 'symbol') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        <th (click)="sortData('symbol')" class="p-4 w-[15%] cursor-pointer hover:text-white transition-colors select-none">
+          Symbol @if (sortColumn === 'symbol') { <span class="text-blue-500">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
         </th>
-        
-        <th (click)="sortData('quantity')" style="cursor: pointer; user-select: none;">
-          Wolumen
-          @if (sortColumn === 'quantity') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        <th (click)="sortData('quantity')" class="p-4 w-[12%] cursor-pointer hover:text-white transition-colors select-none">
+          Wolumen @if (sortColumn === 'quantity') { <span class="text-blue-500">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
         </th>
-        
-        <th (click)="sortData('purchasePrice')" style="cursor: pointer; user-select: none;">
-          Cena Zakupu
-          @if (sortColumn === 'purchasePrice') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        <th (click)="sortData('purchasePrice')" class="p-4 w-[13%] cursor-pointer hover:text-white transition-colors select-none">
+          Śr. Cena @if (sortColumn === 'purchasePrice') { <span class="text-blue-500">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
         </th>
-        
-        <th>Aktualny Kurs</th> <th (click)="sortData('totalValue')" style="cursor: pointer; user-select: none;">
-          Wartość
-          @if (sortColumn === 'totalValue') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        <th class="p-4 w-[12%]">Kurs</th>
+        <th (click)="sortData('totalValue')" class="p-4 w-[12%] cursor-pointer hover:text-white transition-colors select-none">
+          Wartość @if (sortColumn === 'totalValue') { <span class="text-blue-500">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
         </th>
-
-        <th (click)="sortData('profitLossPercentage')" style="cursor: pointer; user-select: none;">
-          Zysk netto %
-          @if (sortColumn === 'profitLossPercentage') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        <th (click)="sortData('profitLossPercentage')" class="p-4 w-[11%] cursor-pointer hover:text-white transition-colors select-none">
+          Zysk % @if (sortColumn === 'profitLossPercentage') { <span class="text-blue-500">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
         </th>
-        
-        <th (click)="sortData('profitLoss')" style="cursor: pointer; user-select: none;">
-          Zysk netto
-          @if (sortColumn === 'profitLoss') { <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
+        <th (click)="sortData('profitLoss')" class="p-4 w-[12%] cursor-pointer hover:text-white transition-colors select-none">
+          Zysk $ @if (sortColumn === 'profitLoss') { <span class="text-blue-500">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span> }
         </th>
-        
-        <th>Akcje</th>
+        <th class="p-4 w-[13%]">Akcje</th>
       </tr>
     </thead>
-    <tbody>
+
+    <tbody class="text-sm">
       @for (group of groupedAssets; track group.symbol) {
         
-        <tr (click)="toggleGroup(group)" style="background-color: #f0f2f5; cursor: pointer;">
-          <td>
-            <b style="font-size: 1.1em;">
-              {{ group.isExpanded ? '▼' : '▶' }} {{ group.symbol }}
-            </b>
-            <span style="color: gray; font-size: 0.8em; margin-left: 5px;">(Otwarte: {{ group.items.length }})</span>
+        <tr (click)="toggleGroup(group)" class="border-b border-slate-700 hover:bg-slate-700/50 cursor-pointer transition-colors">
+          <td class="p-4 font-bold text-white">
+            {{ group.symbol }}
+            <span class="text-slate-500 text-xs ml-2 font-normal block xl:inline">(Otwarte: {{ group.items.length }})</span>
           </td>
-          <td><b>{{ group.totalQuantity | number:'1.0-8' }}</b></td>
-          <td><b>{{ group.averagePurchasePrice | currency:'USD' }}</b></td>
-          <td><b>{{ group.currentPrice ? (group.currentPrice | currency:'USD') : 'Ładowanie...' }}</b></td>
-          <td><b>{{ group.totalValue | currency:'USD' }}</b></td>
-          <td [style.color]="group.profitLossPercentage > 0 ? 'green' : (group.profitLossPercentage < 0 ? 'red' : 'black')">
-            <b>{{ group.profitLossPercentage | number:'1.2-2' }}%</b>
+          <td class="p-4 font-semibold text-slate-200">{{ group.totalQuantity | number:'1.0-8' }}</td>
+          <td class="p-4 text-slate-300">{{ group.averagePurchasePrice | currency:'USD' }}</td>
+          <td class="p-4 font-semibold text-white">{{ group.currentPrice ? (group.currentPrice | currency:'USD') : 'Ładowanie...' }}</td>
+          <td class="p-4 font-bold text-slate-200">{{ group.totalValue | currency:'USD' }}</td>
+          
+          <td class="p-4 font-bold" 
+              [ngClass]="group.profitLossPercentage > 0 ? 'text-emerald-500' : (group.profitLossPercentage < 0 ? 'text-red-500' : 'text-slate-400')">
+            {{ group.profitLossPercentage | number:'1.2-2' }}%
           </td>
-          <td [style.color]="group.totalProfitLoss > 0 ? 'green' : (group.totalProfitLoss < 0 ? 'red' : 'black')">
-            <b>{{ group.totalProfitLoss | currency:'USD' }}</b>
+          <td class="p-4 font-bold" 
+              [ngClass]="group.totalProfitLoss > 0 ? 'text-emerald-500' : (group.totalProfitLoss < 0 ? 'text-red-500' : 'text-slate-400')">
+            {{ group.totalProfitLoss | currency:'USD' }}
           </td>
-          <td style="color: gray; font-size: 0.8em;">Kliknij, by rozwinąć</td>
+          <td class="p-4 text-slate-500 text-xs">Kliknij, by rozwinąć</td>
         </tr>
 
         @if (group.isExpanded) {
           @for (asset of group.items; track asset.id) {
-            <tr>
+            <tr class="border-b border-slate-700/50 bg-slate-900/30">
+              
               @if (editingId === asset.id) {
-                <td style="padding-left: 30px;">Buy #{{ asset.id }}</td>
-                <td><input type="number" [(ngModel)]="editCache.quantity" style="width: 70px;"></td>
-                <td><input type="number" [(ngModel)]="editCache.purchasePrice" style="width: 90px;"></td>
-                <td colspan="2" style="color: gray; font-size: 0.9em;"><i>Zapisz, aby przeliczyć</i></td>
-                <td>-</td>
-                <td>-</td>
-                <td>
-                    <button (click)="saveEdit($event)" style="color: green; cursor: pointer; font-weight: bold;">Zastosuj</button>
-                    <button (click)="cancelEdit($event)" style="cursor: pointer;">Anuluj</button>
+                <td class="p-4 pl-8 text-slate-400 text-xs">Buy #{{ asset.id }}</td>
+                <td class="p-4"><input type="number" [(ngModel)]="editCache.quantity" class="bg-slate-950 border border-blue-500 text-white px-2 py-1 rounded w-full outline-none"></td>
+                <td class="p-4"><input type="number" [(ngModel)]="editCache.purchasePrice" class="bg-slate-950 border border-blue-500 text-white px-2 py-1 rounded w-full outline-none"></td>
+                <td colspan="2" class="p-4 text-slate-500 italic text-xs">Zapisz, aby przeliczyć...</td>
+                <td class="p-4"></td>
+                <td class="p-4"></td>
+                <td class="p-4 flex flex-col gap-1 xl:flex-row xl:gap-3">
+                  <button (click)="saveEdit($event)" class="text-emerald-500 hover:text-emerald-400 font-bold transition-colors text-left">Zastosuj</button>
+                  <button (click)="cancelEdit($event)" class="text-slate-400 hover:text-white transition-colors text-left">Anuluj</button>
                 </td>
               } @else {
-                <td style="padding-left: 30px; color: #555;">Buy #{{ asset.id }}</td>
-                <td style="color: #555;">{{ asset.quantity | number:'1.0-8' }}</td>
-                <td style="color: #555;">{{ asset.purchasePrice | currency:'USD' }}</td>
-                <td style="color: #555;">{{ group.currentPrice | currency:'USD' }}</td>
-                <td style="color: #555;">{{ asset.totalValue | currency:'USD' }}</td>
-                <td [style.color]="asset.profitLoss! > 0 ? 'green' : (asset.profitLoss! < 0 ? 'red' : 'black')">
+                <td class="p-4 pl-8 text-slate-500">Buy #{{ asset.id }}</td>
+                <td class="p-4 text-slate-400">{{ asset.quantity | number:'1.0-8' }}</td>
+                <td class="p-4 text-slate-400">{{ asset.purchasePrice | currency:'USD' }}</td>
+                <td class="p-4 text-slate-400">{{ group.currentPrice | currency:'USD' }}</td>
+                <td class="p-4 text-slate-400">{{ asset.totalValue | currency:'USD' }}</td>
+                <td class="p-4" [ngClass]="asset.profitLoss! > 0 ? 'text-emerald-500/80' : (asset.profitLoss! < 0 ? 'text-red-500/80' : 'text-slate-500')">
                   {{ $any(asset).profitLossPercentage | number:'1.2-2' }}%
                 </td>
-                <td [style.color]="asset.profitLoss! > 0 ? 'green' : (asset.profitLoss! < 0 ? 'red' : 'black')">
+                <td class="p-4" [ngClass]="asset.profitLoss! > 0 ? 'text-emerald-500/80' : (asset.profitLoss! < 0 ? 'text-red-500/80' : 'text-slate-500')">
                   {{ asset.profitLoss | currency:'USD' }}
                 </td>
-                <td>
-                    <button (click)="startEdit(asset, $event)" style="cursor: pointer; margin-right: 5px;">Edytuj</button>
-                    <button (click)="onDelete(asset.id, $event)" style="color: red; cursor: pointer;">Usuń</button>
+                <td class="p-4 flex flex-col gap-1 xl:flex-row xl:gap-3">
+                  <button (click)="startEdit(asset, $event)" class="text-blue-400 hover:text-blue-300 transition-colors text-left">Edytuj</button>
+                  <button (click)="onDelete(asset.id, $event)" class="text-red-400 hover:text-red-300 transition-colors text-left">Usuń</button>
                 </td>
               }
             </tr>
@@ -94,10 +88,11 @@
       }
       @empty {
         <tr>
-          <td colspan="7" style="text-align: center; padding: 20px;">
-            Brak kryptowalut w bazie.
+          <td colspan="8" class="text-center p-12 text-slate-500">
+            Brak kryptowalut w portfelu.<br>Dodaj pierwszą transakcję.
           </td>
         </tr>
       }
     </tbody>
   </table>
+</div>
