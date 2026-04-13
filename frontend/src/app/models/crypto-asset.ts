@@ -3,8 +3,19 @@ export interface CryptoAsset {
   symbol: string;
   quantity: number;
   purchasePrice: number;
-  purchaseDate: string;
   currentPrice?: number;
   totalValue?: number;
   profitLoss?: number;
+}
+
+export interface GroupedAsset {
+  symbol: string;
+  totalQuantity: number;
+  averagePurchasePrice: number;
+  currentPrice: number;
+  totalValue: number;
+  totalProfitLoss: number;
+  profitLossPercentage: number;
+  isExpanded: boolean;
+  items: CryptoAsset[];
 }
