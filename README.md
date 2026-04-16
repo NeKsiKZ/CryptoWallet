@@ -19,7 +19,7 @@ git clone https://github.com/NeKsiKZ/CryptoWallet.git
 ```
 ### 3. Run the Backend
 ```bash
-cd .\CryptoWallet\CryptoWallet\
+cd /CryptoWallet/CryptoWallet
 
 dotnet run
 ```
@@ -27,7 +27,7 @@ dotnet run
 
 ### 4. Run the Frontend
 ```bash
-cd .\CryptoWallet\frontend\
+cd /CryptoWallet/frontend
 
 npm install 
 
