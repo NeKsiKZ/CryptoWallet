@@ -25,13 +25,11 @@ namespace CryptoWallet.Controllers
         public async Task<ActionResult<IEnumerable<CryptoAssetDto>>> GetAll()
         {
             var assets = await _context.CryptoAssets.ToListAsync();
-            var dtos = new List<CryptoAssetDto>();
-
-            foreach (var a in assets)
+            var tasks = assets.Select(async a =>
             {
                 var currentPrice = await _priceService.GetCurrentPriceAsync(a.Symbol);
 
-                dtos.Add(new CryptoAssetDto
+                return new CryptoAssetDto
                 {
                     Id = a.Id,
                     Symbol = a.Symbol,
@@ -39,8 +37,10 @@ namespace CryptoWallet.Controllers
                     PurchasePrice = a.PurchasePrice,
                     PurchaseDate = a.PurchaseDate,
                     CurrentPrice = currentPrice
-                });
-            }
+                };
+            });
+
+            var dtos = await Task.WhenAll(tasks);
 
             return Ok(dtos);
         }
